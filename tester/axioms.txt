@@ -1,0 +1,31 @@
+﻿include C:\Users\igore\source\repos\Types\tester\logic.txt;
+
+func redtype A=reduced (typeof A);
+func bin_left A=input (function (redtype A));
+func bin_right A=input (redtype A);
+
+axiom nat : Prop;
+axiom eq : nat->nat->Prop;
+infix eq =;
+axiom eq_intro : #n:nat.n=n;
+axiom eq_elim : #A:nat->Prop.#x:nat.#y:nat.x=y->(A x)->(A y);
+func replace A p=eq_elim A (bin_left p) (bin_right p) p (eq_intro (input (reduced (A (bin_left p)))));
+
+
+
+axiom zero : nat;
+axiom succ : nat->nat;
+axiom ind : #A:nat->Prop.(A zero)->(#n:nat.(A n)->(A (succ n)))->#n:nat.(A n);
+
+axiom succ_neq_zero : #n:nat.(not (succ n)=zero);
+axiom succ_elim : #a:nat.#b:nat.(succ a)=(succ b)->a=b;
+
+axiom plus : nat->nat->nat;
+infix plus +;
+axiom plus_succ : #a:nat.#b:nat.a+(succ b)=(succ a+b);
+axiom plus_zero : #a:nat.a+zero=a;
+
+axiom times : nat->nat->nat;
+infix times *;
+axiom times_zero : #a:nat.a*zero=zero;
+axiom times_succ : #a:nat.#b:nat.a*(succ b)=a+(a*b);

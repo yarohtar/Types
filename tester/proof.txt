@@ -1,0 +1,234 @@
+include C:\Users\igore\source\repos\Types\tester\axioms.txt;
+include C:\Users\igore\source\repos\Types\tester\equality.txt;
+include C:\Users\igore\source\repos\Types\tester\logic.txt;
+
+
+
+theorem function_to_eq : #a:nat.#b:nat.#f:nat->nat.a=b->(f a)=(f b)
+{
+	let a:nat
+	{
+		let b:nat
+		{
+			let f:nat->nat
+			{
+				let p:a=b
+				{
+					eq_elim (@x:nat.(f a)=(f x)) a b p (eq_intro (f a));
+				}
+			}
+		}
+	}
+}
+
+func apply_f_to_eq f t=function_to_eq (bin_left t) (bin_right t) f t;
+func apply_succ_to_eq t=apply_f_to_eq succ t;
+
+theorem sab_ssasb : #a:nat.#b:nat.(succ a)=b->(succ (succ a))=(succ b)
+{
+	let a:nat
+	{
+		let b:nat
+		{
+			function_to_eq (succ a) b succ;
+		}
+	}
+}
+
+
+
+theorem a_plus_one : #a:nat.a+(succ zero)=(succ a)
+{
+	let a:nat
+	{
+		theorem t1 : a+(succ zero)=(succ (a+zero))
+		{
+			plus_succ a zero;
+		}
+		theorem t2 : a+zero=a
+		{plus_zero a;}
+		theorem t3 : (succ a+zero)=(succ a)
+		{apply_succ_to_eq t2;}
+		make_eq_trans t1 t3;
+	}
+}
+
+theorem plus_assoc : #a:nat.#b:nat.#c:nat.(a+b)+c=a+(b+c)
+{
+	let a:nat{
+		let b:nat{
+			theorem l1 : (a+b)+zero=a+(b+zero)
+			{
+				theorem l11 : b+zero=b{plus_zero b;}
+				theorem l12 : a+(b+zero)=a+b{
+					apply_f_to_eq @x:nat.a+x l11;
+				}
+				theorem l13 : a+b=(a+b)+zero{eq_comm (a+b)+zero a+b (plus_zero a+b);}
+				theorem l14 : a+(b+zero)=(a+b)+zero{eq_trans a+(b+zero) a+b (a+b)+zero l12 l13;}
+				make_eq_comm l14;
+			}
+			theorem l2 : #c:nat.(a+b)+c=a+(b+c)->(a+b)+(succ c)=a+(b+(succ c))
+			{
+				let c:nat{
+					let h : (a+b)+c=a+(b+c){
+						theorem l21 : (a+b)+(succ c)=(succ (a+b)+c){plus_succ a+b c;}
+						theorem l22 : a+(b+(succ c))=a+(succ b+c){apply_f_to_eq @x:nat.a+x (plus_succ b c);}
+						theorem l23 : a+(b+(succ c))=(succ a+(b+c)){make_eq_trans l22 (plus_succ a b+c);}
+						theorem l24 : (a+b)+(succ c)=(succ (a+b)+c){plus_succ a+b c;}
+						theorem l25 : (succ (a+b)+c)=(succ a+(b+c)){apply_succ_to_eq h;}
+						theorem l26 : (a+b)+(succ c)=(succ a+(b+c)){make_eq_trans l24 l25;}
+						make_eq_trans l26 (make_eq_comm l23);
+					}
+				}
+			}
+			ind @c:nat.(a+b)+c=a+(b+c) l1 l2;
+		}
+	}
+}
+
+theorem succ_plus : #a:nat.#b:nat.(succ a)+b=(succ a+b)
+{
+	let a:nat{
+		theorem l1 : (succ a)+zero=(succ a+zero){
+			theorem l11 : (succ a)+zero=(succ a){plus_zero (succ a);}
+			theorem l12 : (succ a+zero)=(succ a){apply_succ_to_eq (plus_zero a);}
+			theorem l13 : (succ a)=(succ a+zero){
+				eq_comm (succ a+zero) (succ a) l12;
+			}
+			eq_trans (succ a)+zero (succ a) (succ a+zero) l11 l13;
+		}
+		theorem l2 : #b:nat.(succ a)+b=(succ a+b)->(succ a)+(succ b)=(succ a+(succ b))
+		{
+			let b:nat{
+				let h : (succ a)+b=(succ a+b){
+					theorem l21 : (succ a)+(succ b)=(succ ((succ a)+b)){plus_succ (succ a) b;}
+					theorem l22 : a+(succ b)=(succ a+b){plus_succ a b;}
+					theorem l23 : (succ a+(succ b))=(succ (succ a+b)){apply_succ_to_eq l22;}
+					theorem l24 : (succ (succ a+b))=(succ a+(succ b)){eq_comm (succ a+(succ b)) (succ (succ a+b)) l23;}
+					theorem l25 : (succ ((succ a)+b))=(succ (succ a+b)){apply_succ_to_eq h;}
+					make_eq_trans (make_eq_trans l21 l25) l24;
+					eq_trans (succ a)+(succ b) (succ (succ a+b)) (succ a+(succ b)) (eq_trans (succ a)+(succ b) (succ ((succ a)+b)) (succ (succ a+b)) l21 l25) l24;
+				}
+			}
+		}
+		ind @b:nat.(succ a)+b=(succ a+b) l1 l2;
+	}
+}
+
+theorem zero_plus : #a:nat.zero+a=a
+{
+	theorem t1 : zero+zero=zero{plus_zero zero;}
+	theorem t2 : #a:nat.zero+a=a->zero+(succ a)=(succ a)
+	{
+		let a:nat{
+			let h:zero+a=a{
+				theorem l1:zero+(succ a)=(succ zero+a){plus_succ zero a;}
+				theorem l2 : (succ zero+a)=(succ a) {apply_succ_to_eq h;}
+				make_eq_trans l1 l2;
+			}
+		}
+	}
+	ind @a:nat.zero+a=a t1 t2;
+}
+
+theorem plus_comm : #a:nat.#b:nat.a+b=b+a
+{
+	let a:nat{
+		theorem t1 : a+zero=zero+a
+		{
+			theorem l1 : a=zero+a{make_eq_comm (zero_plus a);}
+			make_eq_trans (plus_zero a) l1;
+		}
+		theorem t2 : #b:nat.a+b=b+a->a+(succ b)=(succ b)+a
+		{
+			let b:nat{
+				let h:a+b=b+a{
+					theorem l1 : a+(succ b)=(succ a+b){plus_succ a b;}
+					theorem l2 : (succ b)+a=(succ (b+a)){succ_plus b a};
+					theorem l3 : (succ a+b)=(succ b+a){apply_succ_to_eq h;}
+					theorem l4 : (succ b+a)=(succ b)+a{make_eq_comm l2;}
+					theorem l5 : a+(succ b)=(succ b+a){make_eq_trans l1 l3;}
+					make_eq_trans l5 l4;
+				}
+			}
+		}
+		ind @b:nat.a+b=b+a t1 t2;
+	}
+}
+
+theorem zero_times : #a:nat.zero*a=zero
+{
+	theorem t1 : zero*zero=zero{times_zero zero;}
+	theorem t2 : #a:nat.zero*a=zero->zero*(succ a)=zero
+	{
+		let a:nat
+		{
+			let p : zero*a=zero
+			{
+				theorem t21 : zero*(succ a)=zero+(zero*a){times_succ zero a;}
+				theorem t22 : zero+(zero*a)=zero*a{zero_plus zero*a;}
+				theorem t23 : zero*a=zero{p;}
+				make_eq_trans t21 (make_eq_trans t22 t23);
+			}
+		}
+	}
+	ind @a:nat.zero*a=zero t1 t2;
+}
+
+theorem succ_times : #a:nat.#b:nat.(succ a)*b=a*b+b
+{
+	let a:nat
+	{
+		theorem t1 : (succ a)*zero=a*zero+zero
+		{
+			theorem t11 : (succ a)*zero=zero{times_zero (succ a);}
+			theorem t12 : a*zero+zero=zero{make_eq_trans (plus_zero a*zero) (times_zero a);}
+			make_eq_trans t11 (make_eq_comm t12);
+		}
+		theorem t2 : #b:nat.(succ a)*b=a*b+b->(succ a)*(succ b)=a*(succ b)+(succ b)
+		{
+			let b:nat
+			{
+				let p:(succ a)*b=(a*b)+b
+				{
+					theorem t21:(succ a)*(succ b)=(succ a)+(succ a)*b{times_succ (succ a) b;}
+					theorem t22:(succ a)+((succ a)*b)=(succ a)+((a*b)+b){
+						replace @x:nat.(succ a)+((succ a)*b)=(succ a)+x p;}
+					theorem t23:(succ a)+((a*b)+b)=((succ a)+(a*b))+b{make_eq_comm (plus_assoc (succ a) a*b b);}
+					theorem t24:((succ a)+(a*b))+b=((a+(succ zero))+(a*b))+b{
+						replace @x:nat.((succ a)+(a*b))+b=(x+(a*b))+b (make_eq_comm (a_plus_one a));
+					}
+					theorem t25:((a+(succ zero))+(a*b))+b=(a+((succ zero)+(a*b)))+b{
+						replace @x:nat.((a+(succ zero))+(a*b))+b=x+b (plus_assoc a (succ zero) a*b);
+					}
+					theorem t26: (a+((succ zero)+(a*b)))+b=(a+((a*b)+(succ zero)))+b
+					{
+						replace @x:nat.(a+((succ zero)+(a*b)))+b=(a+x)+b (plus_comm (succ zero) a*b);
+					}
+					theorem t27: (a+((a*b)+(succ zero)))+b=((a+(a*b))+(succ zero))+b
+					{
+						replace @x:nat.(a+((a*b)+(succ zero)))+b=x+b (make_eq_comm (plus_assoc a a*b (succ zero)));
+					}
+					theorem t28: ((a+(a*b))+(succ zero))+b=(a+(a*b))+((succ zero)+b)
+					{
+						replace @x:nat.((a+(a*b))+(succ zero))+b=x (plus_assoc a+(a*b) (succ zero) b);
+					}
+					theorem t29: (a+(a*b))+((succ zero)+b)=(a+(a*b))+(b+(succ zero))
+					{
+						replace @x:nat.(a+(a*b))+((succ zero)+b)=(a+(a*b))+x (plus_comm (succ zero) b);
+					}
+					theorem t210:(a+(a*b))+(b+(succ zero))=(a+(a*b))+(succ b)
+					{
+						replace @x:nat.(a+(a*b))+(b+(succ zero))=(a+(a*b))+x (a_plus_one b);
+					}
+					theorem t211:(a+(a*b))+(succ b)=a*(succ b)+(succ b)
+					{
+						replace @x:nat.(a+(a*b))+(succ b)=x+(succ b) (make_eq_comm (times_succ a b));
+					}
+					make_eq_trans t21 (make_eq_trans t22 (make_eq_trans t23 (make_eq_trans t24 (make_eq_trans t25 (make_eq_trans t26 (make_eq_trans t27 (make_eq_trans t28 (make_eq_trans t29 (make_eq_trans t210 t211)))))))));
+				}
+			}
+		}
+		ind @b:nat.(succ a)*b=a*b+b t1 t2;
+	}
+}

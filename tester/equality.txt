@@ -1,0 +1,33 @@
+﻿include C:\Users\igore\source\repos\Types\tester\axioms.txt;
+
+theorem eq_comm : #x:nat.#y:nat.x=y->y=x
+{
+	let x:nat{
+		let y:nat{
+			let k:x=y{
+				eq_elim @n:nat.n=x x y k (eq_intro x);
+			}
+		}
+	}
+}
+
+output eq_comm;
+
+func make_eq_comm t=eq_comm (bin_left t) (bin_right t) t;
+
+theorem eq_trans : #x:nat.#y:nat.#z:nat.x=y->y=z->x=z
+{
+	let x:nat{
+		let y:nat {
+			let z:nat {
+				let a:x=y{
+					let b:y=z{
+						eq_elim (eq x) y z b a;
+					}
+				}
+			}
+		}
+	}
+}
+
+func make_eq_trans l1 l2=eq_trans (bin_left l1) (bin_right l1) (bin_right l2) l1 l2;

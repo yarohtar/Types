@@ -1,0 +1,16 @@
+﻿func false=#r:Prop.r;
+func not r=r->false;
+func p A=A->Prop;
+func U=#x:Type.(((p (p x))->x)->(p (p x)));
+func tau t=@X:Type.@f:((p (p X))->X).@P:(p X).(t @x:U.(P (f ((x X) f))));
+func sigma s=((s U) @t:(p (p U)).(tau t));
+
+func Delta=@y:U.(not #P:(p U).(((sigma y) P)->(P (tau (sigma y)))));
+func Omega=reduced (tau @P:(p U).#x:U.(((sigma x) P)->(P x)));
+
+func fp=(@0:#P:(p U).((#x:U.(((sigma x) P)->(P x)))->(P Omega)).(((0 Delta) @x:U.@2:((sigma x) Delta).@3:#P:(p U).(((sigma x) P)->(P (tau (sigma x)))).(((3 Delta) 2) @P:(p U).(3 @y:U.(P (tau (sigma y)))))) @P:(p U).(0 @y:U.(P (tau (sigma y))))) @P:(p U).@1:#x:U.(((sigma x) P)->(P x)).((1 Omega) @x:U.(1 (tau (sigma x)))));
+
+theorem f : false
+{
+fp;
+}

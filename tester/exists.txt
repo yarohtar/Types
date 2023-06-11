@@ -1,0 +1,47 @@
+﻿include C:\Users\igore\source\repos\Types\tester\logic.txt;
+
+axiom exists : (nat->Prop)->Prop;
+axiom exists_intro : #C:nat->Prop.#x:nat.(C x)->(exists C);
+axiom exists_elim : #C:nat->Prop.(exists C)->nat;
+axiom exists_hyp : #C:nat->Prop.#p:(exists C).(C (exists_elim C p));
+
+
+theorem not_all_implies_exists_not : #A:nat->Prop.(not #n:nat.(not (A n)))->(exists A)
+{
+	let A : nat->Prop
+	{
+		let not_all : not #n:nat.(not (A n))
+		{
+			theorem lem1 : not (not (exists A))
+			{
+				let h : not (exists A)
+				{
+					theorem lem2 : #n:nat.(not (A n))
+					{
+						let x:nat
+						{
+							theorem lem3 : (A x)->(exists A)
+							{
+								let p:A x
+								{
+									exists_intro A x p;
+								}
+							}
+							theorem lem4 : (A x)->(not (A x))
+							{
+								let p:A x
+								{
+									h (lem3 p) (not (A x));
+								}
+							}
+							or_elim (A x) (not (A x)) (not (A x)) lem4 (a_implies_a (not (A x))) (xm (A x));
+						}
+					}
+					not_all lem2;
+				}
+			}
+			output (typeof (nn_elim (exists A) lem1));
+			nn_elim (exists A) lem1;
+		}
+	}
+}

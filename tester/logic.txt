@@ -1,0 +1,55 @@
+﻿axiom and : Prop->Prop->Prop;
+infix and &;
+axiom and_intro : #A:Prop.#B:Prop.A->B->A&B;
+axiom and_elim_left : #A:Prop.#B:Prop.A&B->A;
+axiom and_elim_right : #A:Prop.#B:Prop.A&B->B;
+func false=#A:Prop.A;
+func not A=A->false;
+
+theorem a_implies_a : #A:Prop.A->A
+{
+	let A:Prop
+	{
+		let k:A
+		{
+			k;
+		}
+	}
+}
+
+theorem not_false : not false
+{
+	a_implies_a false;
+}
+
+axiom or :Prop->Prop->Prop;
+infix or |;
+axiom or_intro_left : #A:Prop.#B:Prop.A->A|B;
+axiom or_intro_right : #A:Prop.#B:Prop.B->A|B;
+axiom or_elim : #A:Prop.#B:Prop.#C:Prop.(A->C)->(B->C)->(A|B->C);
+
+axiom xm : #A:Prop.A|(not A);
+
+theorem nn_elim : #A:Prop.(not (not A))->A
+{
+	let A:Prop{
+		let k:not (not A)
+		{
+			or_elim A (not A) A (a_implies_a A) @a:(not A).(k a A) (xm A);
+		}
+	}
+}
+
+theorem contradict : #A:Prop.A->(not A)->false
+{
+	let A:Prop
+	{
+		let a:A
+		{
+			let b: not A
+			{
+				b a;
+			}
+		}
+	}
+}
