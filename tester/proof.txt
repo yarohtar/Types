@@ -1,6 +1,6 @@
-include C:\Users\igore\source\repos\Types\tester\axioms.txt;
-include C:\Users\igore\source\repos\Types\tester\equality.txt;
-include C:\Users\igore\source\repos\Types\tester\logic.txt;
+include axioms.txt;
+include equality.txt;
+include logic.txt;
 
 
 

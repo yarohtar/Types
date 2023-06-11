@@ -8,6 +8,7 @@ namespace tester
 {
     class ProofFile
     {
+        public static string PATH;
         Context context;
         string code;
         List<ProofFile> includes;
@@ -50,7 +51,7 @@ namespace tester
 
                 if (line.Split(' ')[0] == "include")
                 {
-                    var s = new StreamReader(line.Split(' ')[1]);
+                    var s = new StreamReader(PATH + line.Split(' ')[1]);
                     var p = new ProofFile(s.ReadToEnd());
                     includes.Add(p);
                     s.Close();

@@ -8,6 +8,7 @@ namespace tester
     class Program
     {
         static Context context;
+        static string PATH = @"C:\Users\igore\source\repos\Types\tester\";
 
         static void Main(string[] args)
         {
@@ -27,11 +28,17 @@ namespace tester
 
             string code="";
             //u liniji ispod potrebno je navesti fajl u kome se nalazi dokaz koji treba proveriti
-            string PATH = @"C:\Users\igore\source\repos\Types\tester\contradiction.txt";
-            //Console.WriteLine("Enter full path to proof file (or just the name, provided it's in the same folder as .exe):");
-            //PATH=Console.ReadLine();
-            var sr = new StreamReader(PATH);
+            Console.WriteLine("Enter path to folder with proof files (use \\):");
+            PATH=Console.ReadLine();
+            if(!PATH.EndsWith('\\'))
+                PATH+="\\";
+            Console.WriteLine("Enter name of proof file:");
+            string name = Console.ReadLine();
+            Console.WriteLine("Compiling " + PATH + name);
+            ProofFile.PATH = PATH;
+            var sr = new StreamReader(PATH+name);
             code = sr.ReadToEnd();
+            sr.Close();
 
             ProofFile f = new ProofFile(code, context);
             f.Compile();

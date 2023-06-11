@@ -1,4 +1,4 @@
-﻿include C:\Users\igore\source\repos\Types\tester\logic.txt;
+﻿include logic.txt;
 
 axiom exists : (nat->Prop)->Prop;
 axiom exists_intro : #C:nat->Prop.#x:nat.(C x)->(exists C);

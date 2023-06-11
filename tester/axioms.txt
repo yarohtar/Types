@@ -1,4 +1,4 @@
-﻿include C:\Users\igore\source\repos\Types\tester\logic.txt;
+﻿include logic.txt;
 
 func redtype A=reduced (typeof A);
 func bin_left A=input (function (redtype A));
